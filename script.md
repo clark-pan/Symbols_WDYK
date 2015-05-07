@@ -4,7 +4,7 @@ Good evening everyone, my name is Clark and I'm an Interface developer at ansara
 
 # Agenda #
 
-I'm here tonight to encourage everyone to write more modern Javascript. With ES6 ratification being targetted to June this year, I think its about time that we all look towards what new features are coming to Javascript and how we can use them. I want to introduce everyone to a lesser talked about feature, Symbols.
+I'm here tonight to encourage everyone to write more modern Javascript. With ES6 ratification being targetted to June this year, I think its about time that we all look towards what new features are coming to Javascript and how we can use them. I want to introduce everyone to a lesser talked about feature, Symbols. I can show you how using symbols can make your code more readable, more debuggable, and possibly even run faster.
 
 # Symbols, what are they #
 
@@ -28,13 +28,15 @@ What are Symbols? They are a newly added feature in ES6 that allows you to store
 
 	console.log(person["name"]); // undefined
 ```
-The first line of code creates the Symbol. The syntax of Symbol is calling the function Symbol with an optional description of the symbol. It returns to you a unique instance of a Symbol for use.
+The first line of code creates the Symbol. You create a symbol by calling the function "Symbol". The function "Symbol" accepts an optional string argument that is used as a descriptor for this Symbol. I've used the string "name" here. Calling the function returns to you a Symbol ready for use. I'm assigning the newly created Symbol here to a variable called nameSymbol.
 
-Note the lack of a 'new' operator before the Symbol function call. This is because Symbols are a new language primitive in javascript, on the same level as numbers, strings, booleans, null, undefined, but unlike those other primitives, there are currently no way to idiomatically declare a Symbol primitive. So whilst you could say, declare a number 1 or the boolean true and use them as such straight away, the Symbol primitive can only be constructed using the Symbol function. Calling a 'new' operator on the Symbol will construct a new object thats an instance of Symbol, which is most likely not what someone wants. The language spec writers made this distinction less likely to cause hard to debug errors by just saying that using the new operator on Symbol will explicitly throw an error.
+Note the lack of a 'new' operator before the Symbol function call. This is because Symbols are a new language primitive in javascript, on the same level as numbers, strings, booleans, null, undefined, but unlike those other primitives, there is currently no way to declare a Symbol primitive with in built syntactic sugar, such as you would by declaring a string with quotes. So whilst you could say, declare a number with the character "1" or the a boolean with the true and false keyword, the Symbol primitive can only be constructed using the Symbol function. Calling a 'new' operator on the Symbol will construct a new object thats an instance of Symbol, which is most likely not what someone wants. The language spec writers made this distinction less likely to cause hard to debug errors by just saying that using the new operator on Symbol will explicitly throw an error.
 
-Its also important to note that, the descriptor has no relevance on the identity of the Symbol. As this line demonstrates, each invocation of Symbol will create a new, distinct symbol, with the Symbol descriptor having no effect besides as debugging information.
+Its also important to note that, the descriptor has no relevance on the identity of the Symbol. As this line demonstrates, each invocation of Symbol will create a new, distinct symbol, with the Symbol descriptor having no effect besides being used as debugging information.
 
-This next block of code shows how you would assign values to an object using the symbol as a key. The syntax is identical to how you would normally use strings as property keys. You can similiarly also access a property on an object by using the symbol as the key. Using Symbols in a object literal requires using the new computed property language feature in ES6, demonstrated here.
+This next block of code shows how you would assign values to an object using the symbol as a key. The syntax is identical to how you would normally use strings as property keys. You can similiarly also access a property on an object by using the symbol as the key.
+
+Using Symbols in a object literal requires using the new computed property language feature in ES6, demonstrated here.
 
 This line shows that the language is not transforming the Symbol into a string when doing the value assignment.
 
