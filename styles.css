@@ -16,3 +16,22 @@
   vertical-align: middle;
   color: #75B81B !important;
 }
+
+body {
+	tab-size: 4;
+}
+
+#code1 .fragment {
+	opacity: 0.2;
+}
+#code1 .fragment.visible {
+	opacity: 1;
+}
+
+#code1 code {
+	max-height: 450px;
+}
+
+aside.notes {
+	white-space: pre;
+}

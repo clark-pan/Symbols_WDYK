@@ -27,23 +27,6 @@ I will show you how using symbols can make your code more readable, more debugga
 What are Symbols? They are a newly added feature in ES6 that allows you to store a property against an object, not by using a string based key as you would currently, but using this new thing called Symbols. They look like this:
 
 ## Basic usage ##
-```
-	var nameSymbol = Symbol("name");
-
-	console.log(typeof nameSymbol); // symbol
-
-	console.log(Symbol("name") === Symbol("name")); // false
-
-	var person = {};
-	person[nameSymbol] = "Clark";
-	console.log(person[nameSymbol]); // Clark
-
-	person = {
-		[nameSymbol] : "Clark"
-	}; //Equivalent to above
-
-	console.log(person["name"]); // undefined
-```
 What are Symbols? They are a newly added feature in ES6 that allows you to store a property against an object, not by using a string based key, but using a Symbol and it looks like this:
 
 (next)
@@ -76,27 +59,9 @@ This last line just shows that the language is not transforming the Symbol into 
 
 So you're probably thinking now, what is the point of this? Why introduce something that looks so similiar to an existing feature that i know and use so well already?
 
-I'll show you a couple of possible use cases:
+I'll show you a good use case
 
 ## Encapsulation without (ab)using closures ##
-```
-function Television(){
-	var hasPower = false;
-
-	this.turnOn = function(){
-		console.log('Turned television on');
-		hasPower = true;
-	}
-
-	this.switchChannel = function(){
-		if(hasPower){
-			console.log('Channel switched');
-		} else {
-			console.log('Nothing happened');
-		}
-	}
-}
-```
 
 The principle of Encapsulation is about provide a cleaner public interfaces to your classes and hiding implementation detail from the consumers of your code. Reducing the surface area of your code means its much easier for other developers to consume your code, reducing misunderstanding and misuse. One of the core ways of doing this is by hiding properties or methods of an object, and creating a division between what is exposed code, and what is implementation detail.
 
@@ -110,26 +75,7 @@ So there are some problems with this approach.
 
 - Three, theres a small performance hit with creating closures, and this pattern creates a separate closure for each instance of Television. So for each television thats created in your application, a new closure has to be created per function defined in the constructor. This has performance implications, especially when the new Javascript engine tries to apply Just In Time optimizations to these functions.
 
-```
-var hasPowerKey = Symbol('hasPower');
-
-export class Television {
-	constructor() {
-		this[hasPowerKey] = false;
-	}
-	turnOn() {
-		console.log('Turned television on');
-		this[hasPowerKey] = true;
-	}
-	switchChannel() {
-		if(this[hasPowerKey]){
-			console.log('Channel switched');
-		} else {
-			console.log('Nothing happened');
-		}
-	}
-}
-```
+(next)
 
 Using Symbols combined with another es6 feature, the class syntax, we can create a much better way to express the previous concept.
 
@@ -147,61 +93,10 @@ This approach fixes all the problems with the previous example:
 
 - With this code pattern, only 1 closure is created and shared between every instance of the class. This means that the Just In Time compilers should be able to make better optimisations of these functions.
 
-## In built Symbol.iterator and Iterators ##
-```
-	var thing,
-		things = [1, 'apple', 2, 'banana', 3, 'pear'];
-
-	for(thing of things){
-		console.log(thing);
-	}
-	// Output:
-	// 1
-	// apple
-	// 2
-	// banana
-	// 3
-	// pear
-
-	things[Symbol.iterator] = function* (){
-		var iterator = Array.prototype[Symbol.iterator].call(this),
-			value = iterator.next();
-
-		while(!value.done){
-			if(typeof value.value === 'string'){
-				yield value.value;
-			}
-			value = iterator.next();
-		}
-	}
-
-	for(thing of things){
-		console.log(thing);
-	}
-	// Would log
-	// apple
-	// banana
-	// pear
-```
-
-So ES6 introduced the concept of the for...of... loop. It's very similar to the for...in... loop, except instead of looping through an object's keys, it loops through its values. Its useful as a replacement for doing loops with the for...in... loop and avoids needing to use the hasOwnProperty check.
-
-Whats really cool is that ES6 also exposes some built-in symbols that allow you to control this iteration behaviour.
-
-For example, I've defined a new generator for this array of things that:
-- Uses the default Array iterator, via accessing the natively defined iterator on Array.prototype
-- Only yields the value if it is a string
-
-This is a bit of a toy example, but using this concept, one would be able to create very fluent and expressive data structures that can be iterated using native language features. For example, you could create say model tree data and have the iterator loop through its children
-
 # Summary #
 
-I hope I've given you a good introduction to a new ES6 feature that I think that, even if you will not employ in your own code, you'll start seeing in newer js libraries that are written.
+I hope I've given you a good introduction to Symbols. I think this is going to be one of those features where even if you will not employ in your own code, you'll start seeing it being used in newer js libraries that are written.
 
 For more information have a look at these links:
 
-- http://www.2ality.com/2014/12/es6-symbols.html (There are also great, in depth looks at other ES6 features here)
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol
-- https://curiosity-driven.org/private-properties-in-javascript
-
-# Thank you #
+## Thank you ##

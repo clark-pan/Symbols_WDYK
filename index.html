@@ -29,10 +29,126 @@
 					<img src="./profile.jpg" width="250" height="250" style="border-radius:50%;" />
 					<p><a href="https://twitter.com/clarkpan">@clarkpan</a></p>
 					<p><a href="http://ansarada.com" class="ansarada-link"><span class="ansarada-logo"></span> Ansarada</a></p>
+					<aside class="notes">
+						Encourage everyone to write modern javascript
+					</aside>
 				</section>
 				<section>
-					<h1>ES6 Symbols</h1>
+					<h1>ES6 symbols</h1>
 					<h2>what they are and how to use them</h2>
+					<aside class="notes">
+						- Traceur and Babel allow us to write ES6 today
+						- ES6 will make Javascript code look completely different
+						- Symbols, more readable, more debuggable, possibly run faster
+					</aside>
+				</section>
+				<section id="code1">
+					<h2>Basic usage</h2>
+					<pre><code data-trim data-noescape class="javascript"><span class="fragment">var nameSymbol = Symbol("name");</span>
+
+<span class="fragment">var person = {};
+person[nameSymbol] = "Clark";
+console.log(person[nameSymbol]); // Clark</span>
+
+<span class="fragment">person = {
+	[nameSymbol] : "Clark"
+; //Equivalent to above</span>
+
+<span class="fragment">console.log(typeof nameSymbol); // symbol</span>
+
+<span class="fragment">console.log(Symbol("name") === Symbol("name")); // false</span>
+
+<span class="fragment">console.log(person["name"]); // undefined</span>
+					</code></pre>
+					<aside class="notes">
+						- Basic syntax and usage
+						- get and set
+						- Object literal usage
+						- Lack of new operator, Symbol is a primitive
+						- Descriptor has no relevance on the identity of the Symbol
+						- Is actually using it as an object
+					</aside>
+				</section>
+				<!--<section>
+					<h2>Use cases</h2>
+				</section>-->
+				<section>
+					<h2>Encapsulation without (ab)using closures</h2>
+				</section>
+				<section>
+					<section>
+						<h2>Hiding variables using closures</h2>
+						<pre><code data-trim data-noescape class="javascript">
+function Television(){
+	var hasPower = false;
+
+	this.turnOn = function(){
+		console.log('Turned television on');
+		hasPower = true;
+	}
+
+	this.switchChannel = function(){
+		if(hasPower){
+			console.log('Channel switched');
+		} else {
+			console.log('Nothing happened');
+		}
+	}
+}
+						</code></pre>
+					</section>
+					<section>
+						<h2>Hiding variables using symbols</h2>
+						<pre><code data-trim data-noescape class="javascript">
+var hasPowerKey = Symbol('hasPower');
+
+export class Television {
+	constructor() {
+		this[hasPowerKey] = false;
+	}
+	turnOn() {
+		console.log('Turned television on');
+		this[hasPowerKey] = true;
+	}
+	switchChannel() {
+		if(this[hasPowerKey]){
+			console.log('Channel switched');
+		} else {
+			console.log('Nothing happened');
+		}
+	}
+}
+						</code></pre>
+					</section>
+				</section>
+				<!--<section>
+					<h2>Symbol.iterator</h2>
+				</section>
+				<section>
+					<pre><code data-trim data-noescape class="javascript">
+var things = [1, 'apple', 2, 'banana', 3, 'pear'],
+	thing;
+
+for(thing <span class="keyword">of</span> things){
+	console.log(thing);
+}
+// Output:
+// 1
+// apple
+// 2
+// banana
+// 3
+// pear</code></pre>
+				</section>-->
+				<section>
+					<ul>
+						<li><a href="http://www.2ality.com/2014/12/es6-symbols.html">2ality.com/2014/12/es6-symbols.html</a> (Lots of awesome ES6 info)</li>
+						<li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol</a></li>
+						<li><a href="https://curiosity-driven.org/private-properties-in-javascript">curiosity-driven.org/private-properties-in-javascript</a></li>
+					</ul>
+				</section>
+				<section>
+					<h2>Thank you</h2>
 				</section>
 			</div>
 		</div>
