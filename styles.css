@@ -21,17 +21,61 @@ body {
 	tab-size: 4;
 }
 
-#code1 .fragment {
+.reveal .slides section code .fragment {
 	opacity: 0.2;
 }
-#code1 .fragment.visible {
+.reveal .slides section code .fragment.visible {
 	opacity: 1;
-}
-
-#code1 code {
-	max-height: 450px;
 }
 
 aside.notes {
 	white-space: pre;
+}
+
+#closure-section code {
+	position: relative;
+}
+
+#closure-section code:before {
+	content : "";
+	position : absolute;
+	display : block;
+	background-color: #3F3F3F;
+	left : 0;
+	right : 0;
+	top : 0;
+	bottom : 0;
+
+	z-index: 50;
+
+	opacity : 0;
+	transition : opacity 0.2s ease;
+}
+
+#closure-section .closure-focus-1,
+#closure-section .closure-focus-2 {
+	position: relative;
+	z-index: 100;
+	transition : opacity 0.2s ease;
+}
+
+#closure-section.closure-fragment-1 code:before,
+#closure-section.closure-fragment-2 code:before {
+	opacity : 0.8;
+}
+
+#closure-section.closure-fragment-1 .closure-focus-1 {
+	opacity : 1;
+}
+
+#closure-section.closure-fragment-1 .closure-focus-2 {
+	opacity : 0.2;
+}
+
+#closure-section.closure-fragment-2 .closure-focus-1 {
+	opacity : 0.2;
+}
+
+#closure-section.closure-fragment-2 .closure-focus-2 {
+	opacity : 1;
 }

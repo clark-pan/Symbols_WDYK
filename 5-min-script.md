@@ -65,9 +65,11 @@ I'll show you a good use case
 
 The principle of Encapsulation is about provide a cleaner public interfaces to your classes and hiding implementation detail from the consumers of your code. Reducing the surface area of your code means its much easier for other developers to consume your code, reducing misunderstanding and misuse. One of the core ways of doing this is by hiding properties or methods of an object, and creating a division between what is exposed code, and what is implementation detail.
 
-Javascript doesn't really have a clear concept of 'private' properties as in other languages, so to achieve encapulations, developers have resorted to using closures to enclose over a private variable. In this example, I've chosen to hide the `hasPower` variable so the developer cannot just change it without going through the `turnOn` method.
+Javascript doesn't really have a clear concept of 'private' properties as in other languages, so to achieve encapulations, developers have resorted to using closures to enclose over a private variable.
 
-So there are some problems with this approach.
+In this example, I've chosen to hide the `hasPower` variable so the developer cannot just change it without going through the `turnOn` method. There is no way for another class to access the `hasPower` variable, making it effectively hidden from other code.
+
+This approach does achieve encapsulation, but there are several problems with this approach.
 
 - One, debugging is difficult with this code. As your classes become more bigger and your program more complex, its convenient to be able to see what's going on so when you're debugging. Using closures, if you were to set a breakpoint in code that uses this class, you cannot examine what that hasPower variable currently contains.
 
