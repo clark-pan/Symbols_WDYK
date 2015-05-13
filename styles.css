@@ -32,6 +32,7 @@ aside.notes {
 	white-space: pre;
 }
 
+/* Closure example slide */
 #closure-section code {
 	position: relative;
 }
@@ -78,4 +79,28 @@ aside.notes {
 
 #closure-section.closure-fragment-2 .closure-focus-2 {
 	opacity : 1;
+}
+
+/* generic highlight code */
+.highlight-code code {
+	position: relative;
+}
+
+.highlight-code code:before {
+	content : "";
+	position : absolute;
+	display : block;
+	background-color: #3F3F3F;
+	left : 0;
+	right : 0;
+	top : 0;
+	bottom : 0;
+
+	z-index: 50;
+	opacity: 0.8;
+}
+
+.highlight-code .highlight-code-fragment {
+	position: relative;
+	z-index: 100;
 }

@@ -44,7 +44,25 @@
         </section>
         <section id="code1">
           <h2>Basic usage</h2>
-          <pre><code data-trim data-noescape class="javascript"><span class="fragment">var nameSymbol = Symbol("name");</span>
+          <pre><code data-trim data-noescape class="javascript">var nameSymbol = Symbol("name");
+
+<span class="fragment">var person = {};
+person[nameSymbol] = "Clark";</span>
+
+<span class="fragment">console.log(person[nameSymbol]); // Clark</span>
+          </code></pre>
+          <aside class="notes">
+            - Basic syntax and usage
+            - get and set
+            - Object literal usage
+            - Lack of new operator, Symbol is a primitive
+            - Descriptor has no relevance on the identity of the Symbol
+            - Is actually using it as an object
+          </aside>
+        </section>
+        <!--<section id="code1">
+          <h2>Basic usage</h2>
+          <pre><code data-trim data-noescape class="javascript">var nameSymbol = Symbol("name");
 
 <span class="fragment">var person = {};
 person[nameSymbol] = "Clark";
@@ -68,7 +86,7 @@ console.log(person[nameSymbol]); // Clark</span>
             - Descriptor has no relevance on the identity of the Symbol
             - Is actually using it as an object
           </aside>
-        </section>
+        </section>-->
         <!--<section>
           <h2>Use cases</h2>
         </section>-->
@@ -99,20 +117,95 @@ function Television(){
           <span class="fragment" id="closure-fragment-2"></span>
         </section>
         <section>
+          <h2>Hard to debug</h2>
+          <img src="console.png" />
+        </section>
+        <section>
+          <h2>Bad for code reuse</h2>
+          <pre><code data-trim data-noescape class="javascript">
+function PlasmaTV(){
+  //Cannot access hasPower
+  console.log(this.hasPower); //undefined
+}
+
+PlasmaTV.prototype = new Television();
+          </code></pre>
+        </section>
+        <section class="highlight-code">
+          <h2>Closures have a performance penalty</h2>
+          <pre><code data-trim data-noescape class="javascript">
+function Television(){
+  var hasPower = false;
+
+  <span class="highlight-code-fragment">this.turnOn = function(){</span>
+    console.log("Turned television on");
+    hasPower = true;
+  <span class="highlight-code-fragment">}</span>
+
+  <span class="highlight-code-fragment">this.switchChannel = function(){</span>
+    if(hasPower){
+      console.log('Channel switched');
+    } else {
+      console.log('Nothing happened');
+    }
+  <span class="highlight-code-fragment">}</span>
+}
+          </code></pre>
+        </section>
+        <section>
           <h2>Hiding variables using symbols</h2>
           <pre><code data-trim data-noescape class="javascript">
 <span class="fragment">var hasPowerKey = Symbol('hasPower');</span>
 
-<span class="fragment">export class Television {</span>
-  <span class="fragment">constructor() {
-    this[hasPowerKey] = false;
-  }
-  turnOn() {
-    console.log('Turned television on');
+<span class="fragment">function Television(){
+  this[hasPowerKey] = false;
+}</span>
+
+<span class="fragment">Television.prototype = {
+  turnOn : function(){
+    console.log("Turned television on");
     this[hasPowerKey] = true;
-  }</span>
-  <span class="fragment">switchChannel() {
-    if(this[hasPowerKey]){
+  },
+  switchChannel : function(){
+    if(hasPower){
+      console.log('Channel switched');
+    } else {
+      console.log('Nothing happened');
+    }
+  }
+}</span>
+          </code></pre>
+        </section>
+        <section>
+          <h2>Debug easily</h2>
+          <img src="console_02.png" />
+        </section>
+        <section>
+          <h2>Code reuse</h2>
+          <pre><code data-trim data-noescape class="javascript">
+function PlasmaTV(){
+  Television.apply(this);
+  console.log(this[hasPowerKey]); //false
+}
+
+PlasmaTV.prototype = new Television();
+          </code></pre>
+        </section>
+        <section class="highlight-code">
+          <h2>Functions only created once</h2>
+          <pre><code data-trim data-noescape class="javascript">
+var hasPowerKey = Symbol('hasPower');
+function Television(){
+  this[hasPowerKey] = false;
+}
+
+<span class="highlight-code-fragment">Television.prototype = {
+  turnOn : function(){
+    console.log("Turned television on");
+    this[hasPowerKey] = true;
+  },
+  switchChannel : function(){
+    if(hasPower){
       console.log('Channel switched');
     } else {
       console.log('Nothing happened');
