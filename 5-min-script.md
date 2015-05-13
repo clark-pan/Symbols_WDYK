@@ -10,7 +10,7 @@ I'm here tonight to encourage everyone to write more modern Javascript.
 
 So as everyone knows by now, ES6 is pretty much usable today, as long as you're happy to go through a transpiler like Traceur or Babel and I think its about time that we all look towards what new features are coming to Javascript and how we can use them.
 
-I want to introduce everyone to a lesser talked about, but no less important feature, Symbols. I will show you how using symbols can make your code more readable, more debuggable, and possibly even run faster.
+I want to introduce everyone to a lesser talked about, but no less important feature, Symbols and I will show you how using symbols can make your code more readable, more debuggable, and possibly even run faster.
 
 # Symbols, what are they #
 
@@ -22,17 +22,23 @@ The first line of code creates the Symbol. You create a symbol by calling the fu
 
 (next)
 
-This next block of code shows how you would assign values to an object using the symbol as a key. The syntax is identical to how you would normally use strings as property keys. You can similiarly also access a property on an object by using the symbol as the key. And thats basically all symbols do.
+This next block of code shows how you would assign values to an object using the symbol as a key. The syntax is identical to how you would normally use strings as property keys.
+
+(next)
+
+You can access the values by using the symbol as well.
+
+And thats... pretty much all symbols are.
 
 So you're probably thinking now, what is the point of this? Why introduce something that looks so similiar to an existing feature that i know and use so well already?
 
-I'll go through with you a good use case
+Well, I'll show you use case.
 
 ## Encapsulation without (ab)using closures ##
 
-So one way you can write cleaner code in any language is providing a cleaner interface to your code. So usually when you're writing code for others to use, you would want to be able to hide variables and methods that are only used internally and not allow external applications from calling them.
+So one way you can write cleaner code in any language is using encapsulation. By hiding methods and properties that are only used internally, and only exposing the methods and properties that the developer should be using, your code becomes much easier to understand and consume, and maintain.
 
-Now, Javascript doesn't really have a clear concept of 'private' properties as in other languages, so to achieve encapulations, developers have resorted to using closures, like so:
+Now, Javascript doesn't really have a clear concept of 'private' properties as other languages, which means developers have resorted to using various hacky methods, such as closures like so:
 
 (next)
 
@@ -50,36 +56,41 @@ So, this approach works, but there are several problems with this approach.
 
 (next)
 
-- Three, with this technique, you are actually creating two new functions everytime you make a new Television. This has performance implementations in modern javascript environments and should be avoided in performance critical code paths.
+- Three, with this technique, you are actually creating two new functions everytime you make a new Television. This has performance implications in modern javascript environments and should be avoided in performance critical code paths.
 
-# Hiding variable using symbols #
-So I'll show you how you can use Symbols.
+# Encapsulation with symbols #
 
-(next)
-
-First you create a symbol.
+So next I'll show you how you can use Symbols to clean up this code a little.
 
 (next)
 
-Next, if you want to set or read the property, use the symbol to access it against the instance.
+Same as before, we'll be making a television.
 
 (next)
 
-With this technique you'll also define your functions on the prototype.
-
-This approach fixes all the problems with the previous example.
+First you create a symbol. Name it accordingly to describe the value.
 
 (next)
 
-- When you log the instnace in the debugger, you'll see what the value hasPower is. Chrome shows the info as Symbol(name)
+Next, use that symbol when you want to get or set that property on the object.
 
 (next)
 
-- You can share symbols between classes, and they'll be able to access those properties. You may be wondering whats stopping other developers from doing this in outside code? Nothing technically... Well it should be a code-smell when they do that, but I fully expect in the next few months that somebody will come up with a framework of some sort to manage what class has access to what symbols.
+Then, define your functions on the class prototype, and use symbols to access that property.
+
+With this approach, all the problems with the closures example are fixed.
 
 (next)
 
-- Because you're only declaring your functions once on the prototype, they are only created once, which allows the modern javascript engines to more efficiently optimize this code.
+- When you log the instance in the debugger, you'll see what hasPower is.
+
+(next)
+
+- You can share symbols between classes, and they'll be able to access those properties. You may be wondering whats stopping other developers from doing this in outside code? Nothing technically... Well it should be a code-smell when they use a symbol like that, but I fully expect in the next few months that somebody will come up with a framework of some sort to manage symbols.
+
+(next)
+
+- Because you're only declaring your functions once on the prototype, they are only created once, which allows modern javascript engines to more efficiently optimize this code.
 
 # Summary #
 
