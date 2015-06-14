@@ -28,68 +28,174 @@
           <h1>Hello</h1>
           <img src="./profile.jpg" width="250" height="250" style="border-radius:50%;" />
           <p><a href="https://twitter.com/clarkpan">@clarkpan</a></p>
-          <p><a href="http://ansarada.com" class="ansarada-link"><span class="ansarada-logo"></span> Ansarada</a></p>
+          <p><a href="http://ansarada.com" class="ansarada-link"><span class="ansarada-logo"></span> ansarada</a></p>
           <aside class="notes">
-            Encourage everyone to write modern javascript
+            <ul>
+              <li>Encourage everyone to write modern javascript</li>
+            </ul>
           </aside>
         </section>
         <section>
           <h1>ES6 symbols</h1>
           <h2>what they are and how to use them</h2>
           <aside class="notes">
-            - Traceur and Babel allow us to write ES6 today
-            - ES6 will make Javascript code look completely different
-            - Symbols, more readable, more debuggable, possibly run faster
+            <ul>
+              <li>ES6 coming around the corner</li>
+              <li>Should learn new language features today</li>
+            </ul>
           </aside>
         </section>
-        <section id="code1">
+        <section>
+          <h2>Property Access</h2>
+          <pre><code data-trim data-noescape class="javascript">
+<span class="fragment">var person = {};</span>
+<span class="fragment">person.name = "Clark";</span>
+
+<span class="fragment">console.log(person.name); // Clark
+console.log(person['name']); // Clark
+var key = 'name';
+console.log(person[key]); // Clark</span>
+          </code></pre>
+        </section>
+        <section>
+          <h2>Using an object as a key</h2>
+          <pre><code data-trim data-noescape class="javascript">
+<span class="fragment">var person = {};
+var foo = {};
+person[foo] = "Foo";
+console.log(person[foo]); // Foo</span>
+          </code></pre>
+        </section>
+        <section>
+          <h2>But wait... </h2>
+          <pre><code data-trim data-noescape class="javascript">
+var bar = {};
+person[bar] = "Bar";
+console.log(person[bar]); // Bar
+
+console.log(person[foo]); // Bar
+          </code></pre>
+        </section>
+        <section>
+          <h2>Whats actually happening</h2>
+          <img src="object_as_key.png" style="width:100%;" />
+        </section>
+        <section>
+          <h1>Symbols</h1>
+        </section>
+        <section>
           <h2>Basic usage</h2>
-          <pre><code data-trim data-noescape class="javascript">var nameSymbol = Symbol("name");
+          <pre><code data-trim data-noescape class="javascript">
+var nameSymbol = Symbol();
 
 <span class="fragment">var person = {};
 person[nameSymbol] = "Clark";</span>
 
 <span class="fragment">console.log(person[nameSymbol]); // Clark</span>
           </code></pre>
-          <aside class="notes">
-            - Basic syntax and usage
-            - get and set
-            - Object literal usage
-            - Lack of new operator, Symbol is a primitive
-            - Descriptor has no relevance on the identity of the Symbol
-            - Is actually using it as an object
-          </aside>
         </section>
-        <!--<section id="code1">
-          <h2>Basic usage</h2>
-          <pre><code data-trim data-noescape class="javascript">var nameSymbol = Symbol("name");
+        <section>
+          <h2>A new primitive</h2>
+          <pre><code data-trim data-noescape class="javascript">
+console.log(typeof nameSymbol); // symbol
 
-<span class="fragment">var person = {};
-person[nameSymbol] = "Clark";
-console.log(person[nameSymbol]); // Clark</span>
-
-<span class="fragment">person = {
-  [nameSymbol] : "Clark"
-; //Equivalent to above</span>
-
-<span class="fragment">console.log(typeof nameSymbol); // symbol</span>
-
-<span class="fragment">console.log(Symbol("name") === Symbol("name")); // false</span>
-
-<span class="fragment">console.log(person["name"]); // undefined</span>
+nameSymbol.foo = "Foo";
+console.log(nameSymbol.foo); // undefined
           </code></pre>
-          <aside class="notes">
-            - Basic syntax and usage
-            - get and set
-            - Object literal usage
-            - Lack of new operator, Symbol is a primitive
-            - Descriptor has no relevance on the identity of the Symbol
-            - Is actually using it as an object
-          </aside>
-        </section>-->
-        <!--<section>
+        </section>
+        <section>
+          <h2>Optional name parameter</h2>
+          <pre><code data-trim data-noescape class="javascript">
+var nameSymbol = Symbol("name");
+          </code></pre>
+        </section>
+        <section>
+          <h2>Symbols are unique</h2>
+          <pre><code data-trim data-noescapes class="javascript">
+console.log(Symbol("name") === Symbol("name")); // false
+          </code></pre>
+        </section>
+        <section>
+          <h2>Not part of iteration loops</h2>
+          <pre><code data-trim data-noescapes class="javascript">
+var ageKey = Symbol("age");
+var person = {
+  "name" : "Clark",
+  [ageKey] : 28
+};
+
+for(let value of person){
+  console.log(value); //Would only log "Clark"
+}
+          </code></pre>
+        </section>
+        <section>
+          <h2>Works well with prototype</h2>
+          <pre><code data-trim data-noescapes class="javascript">
+var sym = Symbol();
+class A {
+  [sym]() {
+    console.log('A');
+  }
+}
+
+class B extends A {}
+
+var a = new A();
+a[sym]();
+          </code></pre>
+        </section>
+        <section>
           <h2>Use cases</h2>
-        </section>-->
+        </section>
+        <section>
+          <h2>Well known Symbols</h2>
+        </section>
+        <section>
+          <pre><code data-trim data-noescape class="javascript">
+var things = [1, 'apple', 2, 'banana', 3, 'pear'],
+  thing;
+
+for(thing <span class="keyword">of</span> things){
+  console.log(thing);
+}
+// Output:
+// 1
+// apple
+// 2
+// banana
+// 3
+// pear
+</code></pre>
+        </section>
+        <section>
+          <h2>Attaching own properties in a safe way</h2>
+          <pre><code data-trim data-noescape class="javascript">
+var dataSym = Symbol('data');
+var elm = document.getElementById('dropdown');
+
+elm[dataSym] = {
+  //Some data you want to associate with the element
+};
+          </code></pre>
+        </section>
+        <section>
+          <pre><code data-trim data-noescape class="javascript">
+things[Symbol.iterator] = function*(){
+  for(let i = 0; i < this.length; i++){
+    if(typeof this[i] === "string") yield this[i];
+  }
+}
+
+for(thing <span class="keyword">of</span> things){
+  console.log(thing);
+}
+// Output:
+// apple
+// banana
+// pear
+          </code></pre>
+        </section>
         <section>
           <h2>Encapsulation without (ab)using closures</h2>
         </section>
@@ -99,17 +205,13 @@ console.log(person[nameSymbol]); // Clark</span>
 function Television(){
   <span class="closure-focus-1">var hasPower = false;</span>
 
-  <span class="closure-focus-2">this.turnOn = function(){
-    console.log("Turned television on");
-    hasPower = true;
-  }
-
-  this.switchChannel = function(){
+  <span class="closure-focus-2">this.powerButton = function(){
     if(hasPower){
-      console.log('Channel switched');
+      console.log("TV switched off");
     } else {
-      console.log('Nothing happened');
+      console.log("TV switched on");
     }
+    hasPower = !hasPower;
   }</span>
 }
           </code></pre>
@@ -118,7 +220,7 @@ function Television(){
         </section>
         <section>
           <h2>Hard to debug</h2>
-          <img src="console.png" width="600" />
+          <img src="console.png" style="width:100%;" />
         </section>
         <section>
           <h2>Bad for code reuse</h2>
@@ -137,17 +239,13 @@ PlasmaTV.prototype = new Television();
 function Television(){
   var hasPower = false;
 
-  <span class="highlight-code-fragment">this.turnOn = function(){</span>
-    console.log("Turned television on");
-    hasPower = true;
-  <span class="highlight-code-fragment">}</span>
-
-  <span class="highlight-code-fragment">this.switchChannel = function(){</span>
+  <span class="highlight-code-fragment">this.powerButton = function(){</span>
     if(hasPower){
-      console.log('Channel switched');
+      console.log("TV switched off");
     } else {
-      console.log('Nothing happened');
+      console.log("TV switched on");
     }
+    hasPower = !hasPower;
   <span class="highlight-code-fragment">}</span>
 }
           </code></pre>
@@ -160,28 +258,24 @@ function Television(){
           <pre><code data-trim data-noescape class="javascript">
 <span class="fragment">var hasPowerKey = Symbol('hasPower');</span>
 
-<span class="fragment">function Television(){
-  this[hasPowerKey] = false;
-}</span>
-
-<span class="fragment">Television.prototype = {
-  turnOn : function(){
-    console.log("Turned television on");
-    this[hasPowerKey] = true;
-  },
-  switchChannel : function(){
-    if(hasPower){
-      console.log('Channel switched');
+<span class="fragment">class Television {
+  constructor() {
+    this[hasPowerKey] = false;
+  }
+  powerButton() {
+    if(this[hasPowerKey]){
+      console.log("TV switched off");
     } else {
-      console.log('Nothing happened');
+      console.log("TV switched on");
     }
+    this[hasPowerKey] = !this[hasPowerKey];
   }
 }</span>
           </code></pre>
         </section>
         <section>
           <h2>Debug easily</h2>
-          <img src="console_02.png" width="600" />
+          <img src="console_02.png" style="width:100%;" />
         </section>
         <section>
           <h2>Code reuse</h2>
@@ -198,44 +292,22 @@ PlasmaTV.prototype = new Television();
           <h2>Functions only created once</h2>
           <pre><code data-trim data-noescape class="javascript">
 var hasPowerKey = Symbol('hasPower');
-function Television(){
-  this[hasPowerKey] = false;
-}
 
-<span class="highlight-code-fragment">Television.prototype = {
-  turnOn : function(){
-    console.log("Turned television on");
-    this[hasPowerKey] = true;
-  },
-  switchChannel : function(){
-    if(hasPower){
-      console.log('Channel switched');
-    } else {
-      console.log('Nothing happened');
-    }
+class Television {
+  constructor() {
+    this[hasPowerKey] = false;
   }
-}</span>
+  <span class="highlight-code-fragment">powerButton() {
+    if(this[hasPowerKey]){
+      console.log("TV switched off");
+    } else {
+      console.log("TV switched on");
+    }
+    this[hasPowerKey] = !this[hasPowerKey];
+  }</span>
+}
           </code></pre>
         </section>
-        <!--<section>
-          <h2>Symbol.iterator</h2>
-        </section>
-        <section>
-          <pre><code data-trim data-noescape class="javascript">
-var things = [1, 'apple', 2, 'banana', 3, 'pear'],
-  thing;
-
-for(thing <span class="keyword">of</span> things){
-  console.log(thing);
-}
-// Output:
-// 1
-// apple
-// 2
-// banana
-// 3
-// pear</code></pre>
-        </section>-->
         <section>
           <h2>Links</h2>
           <ul>
@@ -245,7 +317,10 @@ for(thing <span class="keyword">of</span> things){
           </ul>
         </section>
         <section>
-          <h2>Thank you</h2>
+          <h1>Thank you</h1>
+          <img src="./profile.jpg" width="250" height="250" style="border-radius:50%;" />
+          <p><a href="https://twitter.com/clarkpan">@clarkpan</a></p>
+          <p><a href="http://ansarada.com" class="ansarada-link"><span class="ansarada-logo"></span> ansarada</a></p>
         </section>
       </div>
     </div>

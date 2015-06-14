@@ -1,21 +1,12 @@
 function Television(){
-	var hasPower = false;
+  var hasPower = false;
 
-	this.turnOn = function(){
-		hasPower = true;
-	}
-
-	this.switchChannel = function(){
-		if(hasPower){
-			console.log('Channel switched');
-		} else {
-			console.log('Nothing happened');
-		}
-	}
+  this.powerButton = function(){
+    if(hasPower){
+      console.log("TV switched off");
+    } else {
+      console.log("TV switched on");
+    }
+    hasPower = !hasPower;
+  }
 }
-
-var tv = new Television();
-tv.switchChannel(); // Nothing happened
-
-tv.turnOn();
-tv.switchChannel(); // Channel switched
