@@ -51,29 +51,32 @@
 <span class="fragment">var person = {};</span>
 <span class="fragment">person.name = "Clark";</span>
 
-<span class="fragment">console.log(person.name); // Clark
-console.log(person['name']); // Clark
-var key = 'name';
+<span class="fragment">console.log(person.name); // Clark</span>
+<span class="fragment">console.log(person['name']); // Clark</span>
+<span class="fragment">var key = 'name';
 console.log(person[key]); // Clark</span>
           </code></pre>
         </section>
         <section>
           <h2>Using an object as a key</h2>
           <pre><code data-trim data-noescape class="javascript">
-<span class="fragment">var person = {};
-var foo = {};
-person[foo] = "Foo";
-console.log(person[foo]); // Foo</span>
+var weight = { type: "weight" };
+person[weight] = 84;
+console.log(person[weight]); // 84
           </code></pre>
         </section>
         <section>
-          <h2>But wait... </h2>
+          <h2>Using a second object as a key</h2>
           <pre><code data-trim data-noescape class="javascript">
-var bar = {};
-person[bar] = "Bar";
-console.log(person[bar]); // Bar
-
-console.log(person[foo]); // Bar
+var height = { type: "height" };
+person[height] = 180;
+console.log(person[height]); // 180
+          </code></pre>
+        </section>
+        <section>
+          <h2>But wait...</h2>
+          <pre><code data-trim data-noescape class="javascript">
+console.log(person[weight]); // 180
           </code></pre>
         </section>
         <section>
@@ -95,15 +98,6 @@ person[nameSymbol] = "Clark";</span>
           </code></pre>
         </section>
         <section>
-          <h2>A new primitive</h2>
-          <pre><code data-trim data-noescape class="javascript">
-console.log(typeof nameSymbol); // symbol
-
-nameSymbol.foo = "Foo";
-console.log(nameSymbol.foo); // undefined
-          </code></pre>
-        </section>
-        <section>
           <h2>Optional name parameter</h2>
           <pre><code data-trim data-noescape class="javascript">
 var nameSymbol = Symbol("name");
@@ -112,11 +106,20 @@ var nameSymbol = Symbol("name");
         <section>
           <h2>Symbols are unique</h2>
           <pre><code data-trim data-noescapes class="javascript">
-console.log(Symbol("name") === Symbol("name")); // false
+console.log(Symbol("name") == Symbol("name")); // false
           </code></pre>
         </section>
         <section>
-          <h2>Not part of iteration loops</h2>
+          <h2>A new primitive</h2>
+          <pre><code data-trim data-noescape class="javascript">
+<span class="fragment">console.log(typeof nameSymbol); // symbol</span>
+
+<span class="fragment">nameSymbol.foo = "Foo";
+console.log(nameSymbol.foo); // undefined</span>
+          </code></pre>
+        </section>
+        <section>
+          <h2>Prevents access</h2>
           <pre><code data-trim data-noescapes class="javascript">
 var ageKey = Symbol("age");
 var person = {
@@ -124,32 +127,29 @@ var person = {
   [ageKey] : 28
 };
 
-for(let value of person){
-  console.log(value); //Would only log "Clark"
-}
-          </code></pre>
-        </section>
-        <section>
-          <h2>Works well with prototype</h2>
-          <pre><code data-trim data-noescapes class="javascript">
-var sym = Symbol();
-class A {
-  [sym]() {
-    console.log('A');
-  }
+for(var key in person){
+  console.log(person[key]); //Would only log "Clark"
 }
 
-class B extends A {}
-
-var a = new A();
-a[sym]();
+console.log(person.age); //undefined
           </code></pre>
         </section>
         <section>
           <h2>Use cases</h2>
         </section>
         <section>
-          <h2>Well known Symbols</h2>
+          <h2>Attaching properties in a safe way</h2>
+          <pre><code data-trim data-noescape class="javascript">
+var dataSym = Symbol('data');
+var elm = document.getElementById('dropdown');
+
+elm[dataSym] = {
+  //Some data you want to associate with the element
+};
+          </code></pre>
+        </section>
+        <section>
+          <h2>Built in Symbols</h2>
         </section>
         <section>
           <pre><code data-trim data-noescape class="javascript">
@@ -167,17 +167,6 @@ for(thing <span class="keyword">of</span> things){
 // 3
 // pear
 </code></pre>
-        </section>
-        <section>
-          <h2>Attaching own properties in a safe way</h2>
-          <pre><code data-trim data-noescape class="javascript">
-var dataSym = Symbol('data');
-var elm = document.getElementById('dropdown');
-
-elm[dataSym] = {
-  //Some data you want to associate with the element
-};
-          </code></pre>
         </section>
         <section>
           <pre><code data-trim data-noescape class="javascript">
@@ -203,20 +192,21 @@ for(thing <span class="keyword">of</span> things){
           <h2>Hiding variables using closures</h2>
           <pre><code data-trim data-noescape class="javascript">
 function Television(){
-  <span class="closure-focus-1">var hasPower = false;</span>
+  var hasPower = false;
 
-  <span class="closure-focus-2">this.powerButton = function(){
+  this.powerButton = function(){
     if(hasPower){
       console.log("TV switched off");
     } else {
       console.log("TV switched on");
     }
     hasPower = !hasPower;
-  }</span>
+  }
 }
+
+var tv = new Television();
+tv.powerButton(); // TV switched on
           </code></pre>
-          <span class="fragment" id="closure-fragment-1"></span>
-          <span class="fragment" id="closure-fragment-2"></span>
         </section>
         <section>
           <h2>Hard to debug</h2>
@@ -239,14 +229,14 @@ PlasmaTV.prototype = new Television();
 function Television(){
   var hasPower = false;
 
-  <span class="highlight-code-fragment">this.powerButton = function(){</span>
+  <span class="highlight-code-fragment">this.powerButton = function(){
     if(hasPower){
       console.log("TV switched off");
     } else {
       console.log("TV switched on");
     }
     hasPower = !hasPower;
-  <span class="highlight-code-fragment">}</span>
+  }</span>
 }
           </code></pre>
         </section>
@@ -307,6 +297,13 @@ class Television {
   }</span>
 }
           </code></pre>
+        </section>
+        <section>
+          <ul>
+            <li>New language primitive Symbols</li>
+            <li>Used for some new built-in language features</li>
+            <li>Very useful for organising your own code</li>
+          </ul>
         </section>
         <section>
           <h2>Links</h2>

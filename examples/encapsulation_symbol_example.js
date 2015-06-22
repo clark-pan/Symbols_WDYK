@@ -13,3 +13,4 @@ class Television {
     this[hasPowerKey] = !this[hasPowerKey];
   }
 }
+

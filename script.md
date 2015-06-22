@@ -1,76 +1,94 @@
 # Personal Intro #
 
-Good evening everyone, my name is Clark and I'm an Interface developer at ansarada.
+Hello everyone, my name is Clark and I'm an Interface developer at ansarada.
 
-This is my first time talking in front of such a large crowd, so please be gentle...
+I'm here to encourage you to learn a bit more about javascript.
 
-I'm here tonight to encourage everyone to write more modern Javascript.
-
-# Agenda #
-
-So the next version of Javascript, ECMAScript6, or ES6, is quickly gaining traction.
-
-Most of the spec has been locked down and agreed upon, with ratification being targetted for June this year.
-
-Transpiler tools like Traceur and Babel allow us to write ES6 now, and compile down to Javascript for ES5 browsers. This means you can start writing future proofing code and still have it work in IE9+.
-
-ES6 introduces many new language features which will start making code thats written with ES6 look completely different to Javascript thats written now.
-
-I think its about time that we all look towards what new features are coming to Javascript and how we can use them.
-
-I want to introduce everyone to a lesser talked about, but no less important feature, Symbols.
-
-I will show you how using symbols can make your code more readable, more debuggable, and possibly even run faster.
+So as everyone knows by now, ES6, the next version of javascript, is coming around the corner and its packed full of new and interesting features. I want to introduce you to a lesser talked about, but no less important, feature called Symbols.
 
 # Symbols, what are they #
 
-What are Symbols? They are a newly added feature in ES6 that allows you to store a property against an object, not by using a string based key as you would currently, but using this new thing called Symbols. They look like this:
+What are Symbols? So to explain what symbols are and why they're useful, I first have to bring you back to some basics.
+
+## Property access ##
+So, some real basics, in Javascript, you can make objects.
+
+(next)
+
+And you can assign values to these objects using keys.
+
+(next)
+
+And you can access values using that key
+
+(next)
+
+You can also access the value using a string and the square brackets notation
+
+(next)
+
+You can also store that string in a variable and access the value using the variable
+
+## Object as keys ##
+
+Now since you can use variables to access values, what would happen if you tried to use an something other than a string to store the value, like, an object.
+
+(next)
+
+So here I'm storing my weight using an object as key. And it seems to work fine.
+
+(next)
+
+So I'll use another object as a key and store my height and again it seems to work fine.
+
+(next)
+
+But wait... If i try to access my weight again and it now says i'm little heavier than i should be... whats going on?
+
+## Whats actually happening ##
+
+So whats happening is that when you use something other than a string as a key, the `toString` method is called on the object to create a string. By default `toString` returns bracket object object close bracket, so when you use different object as keys, they will all be converted to the same string, and override each other's values.
+
+And it isn't immediately obvious that javascript does this. It doesn't throw an error, it just silently works.
+
+# Symbols #
+So Symbols are a new way to store values on an object using something other than a string. So here are some basics.
 
 ## Basic usage ##
-```
-	var nameSymbol = Symbol("name");
 
-	console.log(typeof nameSymbol); // symbol
-
-	console.log(Symbol("name") === Symbol("name")); // false
-
-	var person = {};
-	person[nameSymbol] = "Clark";
-	console.log(person[nameSymbol]); // Clark
-
-	person = {
-		[nameSymbol] : "Clark"
-	}; //Equivalent to above
-
-	console.log(person["name"]); // undefined
-```
-What are Symbols? They are a newly added feature in ES6 that allows you to store a property against an object, not by using a string based key, but using a Symbol and it looks like this:
+You create a symbol by calling the global function "Symbol".
 
 (next)
 
-The first line of code creates the Symbol. You create a symbol by calling the function "Symbol". The function "Symbol" accepts an optional string argument that is used as a descriptor for this Symbol. I've used the string "name" here. Calling the function returns to you a Symbol ready for use. I'm assigning the newly created Symbol here to a variable called nameSymbol.
+You can use the symbol as the key when you assign a value to an object.
 
 (next)
 
-This next block of code shows how you would assign values to an object using the symbol as a key. The syntax is identical to how you would normally use strings as property keys. You can similiarly also access a property on an object by using the symbol as the key.
+You can access the values by using the symbol as well.
+
+## Descriptor ##
+
+They take an optional descriptor argument, which is used purely for labelling and debugging purposes.
+
+## Unique ##
+
+They are distinct and unique from each other, which means if you create two symbols with the same descriptor, they are still not considered equal.
+
+## Symbols are a new primitive ##
+
+They are a new primitive type in Javascript, on the same level as Number, String, and Boolean.
 
 (next)
 
-You can also use Symbols in a object literal, but it requires using the new computed property language feature in ES6, demonstrated here.
+If you run typeof on a Symbol you'll get back the string 'symbol'.
 
 (next)
 
-You might have noticed the lack of the 'new' keyword before the Symbol function call. This is because Symbols are a new language primitive in javascript, on the same level as numbers, strings, booleans, null, undefined, but unlike those other primitives, there is currently no way to declare a Symbol primitive with built-in Javascript syntax.
+It also means you can't attach properties to symbols, just like numbers and strings.
 
-So whilst you could say, declare a number with the character "1" or the a boolean with the "true" and "false" keyword, the Symbol primitive can only be constructed using the Symbol function. The language spec writers actually made calling Symbol with the `new` operator throw an error, as it will help developers avoid a common mistake where they create a new object instead of a primitive.
+## Prevents access ##
 
-(next)
-
-Its also important to note that, the descriptor string has no relevance on the identity of the Symbol. As this line demonstrates, each invocation of Symbol will create a new, distinct symbol, with the Symbol descriptor having no effect besides being used as debugging information.
-
-(next)
-
-This last line just shows that the language is not transforming the Symbol into a string when doing the value assignment.
+And what makes them really useful is that they are not readily accessible without having access to the symbol. In this example I've created an object with 2 values, one attached via a string and one attached via a symbol. I'm then iterating through them using a for in loop, and logging the results to console. Only the value attached using the string would be logged out.
 
 # Use cases #
 
@@ -78,130 +96,84 @@ So you're probably thinking now, what is the point of this? Why introduce someth
 
 I'll show you a couple of possible use cases:
 
+## Attaching properties in a safe way ##
+
+Because Symbols are unique and will not have collision problems like with strings would, you can use them to add values on objects in a safe way. For example, you can use a symbol to attach some data to a DOMElement, and be confident that it will not affect some library code that may be inadvertently using the same key as you do.
+
+This is actually something similar to what jquery does when you use the `data` method. jQuery creates a key called an expando that is the character underscore, followed by the word jQuery, and then a long string of random numbers to reduce the chance of collision. It uses that key to store a number on the DOMElement, which maps back to some data stored on an internal cache. With ES6 Symbols, jQuery can do away with the expando idea, and instead can use symbols as a way to approach this problem
+
+## Built in Symbols ##
+
+The ES6 spec defines a couple of well known Symbols. These are Symbols that are accessible from the Symbol class and expose aspects of the javascript language that you can hook into. An example of a well known symbol is `Symbol.iterator`.
+
+### Symbol.iterator ###
+
+ES6 introduced the concept of the for...of... loop. It's very similar to the for...in... loop, except instead of looping through an object's keys, it loops through its values. Its useful as a replacement for doing loops with the for...in... loop and the developer using it can avoid needing to use the hasOwnProperty check when using the for...in... loop.
+
+(next)
+
+Whats really cool is that ES6 also exposes some built-in symbols that allow you to control this iteration behaviour.
+
+So for example, I've defined a new generator for this array of things that only yields the value if it is a string. It will make the previous example only log the string values. I've attached the generator using the built in symbol only the array object.
+
+This is a bit of a toy example, and its only for one of the built-in symbols, but I'm sure as we move ES7 and beyond comes out, more and more language features will be accessible via built in symbols
+
 ## Encapsulation without (ab)using closures ##
-```
-function Television(){
-	var hasPower = false;
 
-	this.turnOn = function(){
-		console.log('Turned television on');
-		hasPower = true;
-	}
+The most important usage of symbols i think, is that its a better way to do encapsulation.
 
-	this.switchChannel = function(){
-		if(hasPower){
-			console.log('Channel switched');
-		} else {
-			console.log('Nothing happened');
-		}
-	}
-}
-```
+Encapsulation is about provide a cleaner public interfaces to your classes and hiding implementation detail from people who use your code.
 
-The principle of Encapsulation is about provide a cleaner public interfaces to your classes and hiding implementation detail from the consumers of your code. Reducing the surface area of your code means its much easier for other developers to consume your code, reducing misunderstanding and misuse. One of the core ways of doing this is by hiding properties or methods of an object, and creating a division between what is exposed code, and what is implementation detail.
+Javascript doesn't really have a clear concept of 'private' properties as in other languages, so to achieve encapulations, developers have resorted to using closures to close over a private variable. In this example, I'm creating a Television class and I've chosen to hide the `hasPower` variable. Any changes to that variable has to be done through the `powerButton` method.
 
-Javascript doesn't really have a clear concept of 'private' properties as in other languages, so to achieve encapulations, developers have resorted to using closures to enclose over a private variable. In this example, I've chosen to hide the `hasPower` variable so the developer cannot just change it without going through the `turnOn` method.
+And this works, but there are some problems with this approach.
 
-So there are some problems with this approach.
+(next)
 
-- One, debugging is difficult with this code. As your classes become more bigger and your program more complex, its convenient to be able to see what's going on so when you're debugging. Using closures, if you were to set a breakpoint in code that uses this class, you cannot examine what that hasPower variable currently contains.
+- One, debugging is difficult with this code. As your classes become more bigger and your program more complex, its convenient to be able to see what's going on so when you're debugging. Using closures, if you were to set a breakpoint in code that uses this class, you can't examine what that hasPower variable currently contains.
+
+(next)
 
 - Two, the closed over properties are completely inaccessible, making mixin or inheritance patterns less flexible. So say you want to create a sub-class called 'Plasma TV' thats based off this class, the Plasma TV class that inherits from this class would not be able to access the hasPower property.
 
-- Three, theres a small performance hit with creating closures, and this pattern creates a separate closure for each instance of Television. So for each television thats created in your application, a new closure has to be created per function defined in the constructor. This has performance implications, especially when the new Javascript engine tries to apply Just In Time optimizations to these functions.
+(next)
 
-```
-var hasPowerKey = Symbol('hasPower');
+- Three, theres a small performance hit with creating closures. Hiding variables with closures work because a new closure is created for every instance of Television. So for each instance thats created, a new closure has to be created per function defined in the constructor. This makes it much harder for the Javascript engine to properly optimize your code.
 
-export class Television {
-	constructor() {
-		this[hasPowerKey] = false;
-	}
-	turnOn() {
-		console.log('Turned television on');
-		this[hasPowerKey] = true;
-	}
-	switchChannel() {
-		if(this[hasPowerKey]){
-			console.log('Channel switched');
-		} else {
-			console.log('Nothing happened');
-		}
-	}
-}
-```
+## Encapsulation using Symbols ##
 
-Using Symbols combined with another es6 feature, the class syntax, we can create a much better way to express the previous concept.
+Using Symbols, we can create a much better way to do the previous example.
+
+(next)
 
 First you create a symbol for the property you want to hide.
 
 (next)
 
-Then, any time you want to access or set that hidden property, you use the symbol as the key. Thats pretty much all there is to it. Now, only those with access to the symbol will be able to access the property inside this class.
+Then, any time you want to access or set that property, you use the symbol as the key. Thats pretty much all there is to it.
 
 This approach fixes all the problems with the previous example:
 
-- Because Symbols are attached to a specific object as opposed to being assigned to a closure, the debugging tools show you what symbols are attached to an object when you log it to console, or mouse over it during debugging.
+(next)
 
-- Since Symbols are primitive values, if you want to allow sub-classes to interact with the private property, you simply have to expose it somewhere. I fully expect that soon, someone will be building a new framework that uses this behaviour to create the public/private/protected concepts that exist in other languages.
+- Because Symbols are attached to a specific object, the debugging tools show you the symbols and values that are attached to an object when you log it to console, or mouse over it during debugging.
 
-- With this code pattern, only 1 closure is created and shared between every instance of the class. This means that the Just In Time compilers should be able to make better optimisations of these functions.
+(next)
 
-## In built Symbol.iterator and Iterators ##
-```
-	var thing,
-		things = [1, 'apple', 2, 'banana', 3, 'pear'];
+- If you create a subclass using this method, all you have to do is pass the symbol to the subclass to be able to access the hidden property.
 
-	for(thing of things){
-		console.log(thing);
-	}
-	// Output:
-	// 1
-	// apple
-	// 2
-	// banana
-	// 3
-	// pear
+(next)
 
-	things[Symbol.iterator] = function* (){
-		var iterator = Array.prototype[Symbol.iterator].call(this),
-			value = iterator.next();
+- And because you're not using closures anymore, the Javascript engine can better optimize your code.
 
-		while(!value.done){
-			if(typeof value.value === 'string'){
-				yield value.value;
-			}
-			value = iterator.next();
-		}
-	}
-
-	for(thing of things){
-		console.log(thing);
-	}
-	// Would log
-	// apple
-	// banana
-	// pear
-```
-
-So ES6 introduced the concept of the for...of... loop. It's very similar to the for...in... loop, except instead of looping through an object's keys, it loops through its values. Its useful as a replacement for doing loops with the for...in... loop and avoids needing to use the hasOwnProperty check.
-
-Whats really cool is that ES6 also exposes some built-in symbols that allow you to control this iteration behaviour.
-
-For example, I've defined a new generator for this array of things that:
-- Uses the default Array iterator, via accessing the natively defined iterator on Array.prototype
-- Only yields the value if it is a string
-
-This is a bit of a toy example, but using this concept, one would be able to create very fluent and expressive data structures that can be iterated using native language features. For example, you could create say model tree data and have the iterator loop through its children
+So clearly a better way to do encapsulation.
 
 # Summary #
 
-I hope I've given you a good introduction to a new ES6 feature that I think that, even if you will not employ in your own code, you'll start seeing in newer js libraries that are written.
+And thats it for symbols. They're a new language feature that helps you write cleaner code. I hope I've given you a good quick introduction to Symbols and what they are.
 
-For more information have a look at these links:
+# Links #
 
-- http://www.2ality.com/2014/12/es6-symbols.html (There are also great, in depth looks at other ES6 features here)
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol
-- https://curiosity-driven.org/private-properties-in-javascript
+You can find out more nitty gritty details about Symbols through these links. I'll tweet them out later.
 
-# Thank you #
+## Thank you ##
