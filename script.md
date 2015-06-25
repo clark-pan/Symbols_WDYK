@@ -31,7 +31,7 @@ You can also store that string in a variable and access the value using the vari
 
 ## Object as keys ##
 
-Now since you can use variables to access values, what would happen if you tried to use an something other than a string to store the value, like, an object.
+Now since you can use variables to access values, what would happen if you tried to use something other than a string to store the value, like, an object.
 
 (next)
 
@@ -49,7 +49,15 @@ But wait... If i try to access my weight again and it now says i'm little heavie
 
 So whats happening is that when you use something other than a string as a key, the `toString` method is called on the object to create a string. By default `toString` returns bracket object object close bracket, so when you use different object as keys, they will all be converted to the same string, and override each other's values.
 
-And it isn't immediately obvious that javascript does this. It doesn't throw an error, it just silently works.
+(next)
+
+And even though the two objects are not equal,
+
+(next)
+
+they both become the same string value when used as a key.
+
+It isn't really immediately obvious that you cannot do this, cause, I mean, it doesn't throw an error, and if you don't look too closely it just seems to work. Especially since, until ES6, we didn't really have a dictionary implementation, meaning people coming from other languages get confused when they can't seem to associate one object to another.
 
 # Symbols #
 So Symbols are a new way to store values on an object using something other than a string. So here are some basics.
@@ -68,7 +76,7 @@ You can access the values by using the symbol as well.
 
 ## Descriptor ##
 
-They take an optional descriptor argument, which is used purely for labelling and debugging purposes.
+The symbol function take an optional descriptor argument, which is used purely for labelling and debugging purposes.
 
 ## Unique ##
 
@@ -86,9 +94,13 @@ If you run typeof on a Symbol you'll get back the string 'symbol'.
 
 It also means you can't attach properties to symbols, just like numbers and strings.
 
-## Prevents access ##
+## Protects access ##
 
-And what makes them really useful is that they are not readily accessible without having access to the symbol. In this example I've created an object with 2 values, one attached via a string and one attached via a symbol. I'm then iterating through them using a for in loop, and logging the results to console. Only the value attached using the string would be logged out.
+And what makes them really useful is that they are not readily accessible without having access to the symbol. In this example I've created an object with 2 values, one attached via a string and one attached via a symbol. And as you can see you can't access the value using anything other than the symbol as the key. Even if you iterated through the keys of the object using a for...in... loop, you still wouldn't get access to the value. In this example only the name value would be logged to console.
+
+## Doesn't completely stop all access ##
+
+Its worth noting that while it makes it harder for developers to get access, it doesn't completely prevent it. ES6 also defines a new method called `getOwnPropertySymbols` that gets all the symbols of an object. This does mean that you can't completely stop access to a value using symbols, but I think the usage of getOwnPropertySymbols in anything other than debugging should be a code-smell.
 
 # Use cases #
 
@@ -96,27 +108,35 @@ So you're probably thinking now, what is the point of this? Why introduce someth
 
 I'll show you a couple of possible use cases:
 
-## Attaching properties in a safe way ##
+## No risk of collision ##
 
-Because Symbols are unique and will not have collision problems like with strings would, you can use them to add values on objects in a safe way. For example, you can use a symbol to attach some data to a DOMElement, and be confident that it will not affect some library code that may be inadvertently using the same key as you do.
+So say you want to create a component of some sort, maybe a dropdown or something. And of course you'll want to perhaps track some internal state of the component, maybe whether or not its open or closed. You could do that via say, a class, or maybe an attribute but that then forms part of the public api of your component. You could also do this via a property on the DOMElement that represents the dropdown. But then of course opens a whole can of worms about what to name the key for the property. Make it too simple and you may collide with something that a future dom spec will implement, make it too complex and it will become a pain to write.
 
-This is actually something similar to what jquery does when you use the `data` method. jQuery creates a key called an expando that is the character underscore, followed by the word jQuery, and then a long string of random numbers to reduce the chance of collision. It uses that key to store a number on the DOMElement, which maps back to some data stored on an internal cache. With ES6 Symbols, jQuery can do away with the expando idea, and instead can use symbols as a way to approach this problem
+If you've ever used the `data` method of jQuery, this is effectively what you've been doing. jQuery creates a long random string value called an expando and uses that to store another key against the element that then maps to a cache that stores the actual value you want to use.
+
+Symbols are a great solution to this problem, since they are unique and there are no chance of a collision. You just create a key of your choosing and use that.
 
 ## Built in Symbols ##
 
-The ES6 spec defines a couple of well known Symbols. These are Symbols that are accessible from the Symbol class and expose aspects of the javascript language that you can hook into. An example of a well known symbol is `Symbol.iterator`.
+ES6 also defines a couple of built-in symbols. They are used to give developers control to newer language features and how they function.
 
 ### Symbol.iterator ###
 
-ES6 introduced the concept of the for...of... loop. It's very similar to the for...in... loop, except instead of looping through an object's keys, it loops through its values. Its useful as a replacement for doing loops with the for...in... loop and the developer using it can avoid needing to use the hasOwnProperty check when using the for...in... loop.
+For example, ES6 defines a new way to loop through an object or array through the for...of... loop. It's very similar to the for...in... loop, except instead of looping through an object's keys, it loops through its values. Its useful as a replacement for doing loops with the for...in... loop and the developer using it can avoid needing to use the hasOwnProperty check when using the for...in... loop.
 
 (next)
 
-Whats really cool is that ES6 also exposes some built-in symbols that allow you to control this iteration behaviour.
+Whats really cool is that ES6 exposes a symbol that allows you to define a generator function to control this behaviour.
 
-So for example, I've defined a new generator for this array of things that only yields the value if it is a string. It will make the previous example only log the string values. I've attached the generator using the built in symbol only the array object.
+(next)
 
-This is a bit of a toy example, and its only for one of the built-in symbols, but I'm sure as we move ES7 and beyond comes out, more and more language features will be accessible via built in symbols
+So for example, I've defined a new generator for this array of things that only yields the value if it is a string.
+
+(next)
+
+This means that now the for... of... loop will only log out the string values, apple, banana, pear
+
+There are other built in symbols that control previously uncontrollable javascript behaviour such as Symbol.hasInstance which controls what the instanceof operator does. I suspect there'll be more features that will be exposed like this in the future, when it makes sense to give developers that control.
 
 ## Encapsulation without (ab)using closures ##
 
@@ -167,6 +187,10 @@ This approach fixes all the problems with the previous example:
 - And because you're not using closures anymore, the Javascript engine can better optimize your code.
 
 So clearly a better way to do encapsulation.
+
+# Browser Support #
+
+Browser support for symbols are very good. Chrome and Opera, Firefox and IE Edge support them out of the box without any flags. Safari currently doesn't support it but its in webkit's javascript engine. You can use Symbols in NodeJS behind the harmony flag or without any flags with IO.js
 
 # Summary #
 

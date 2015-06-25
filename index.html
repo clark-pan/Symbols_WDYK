@@ -119,33 +119,44 @@ console.log(nameSymbol.foo); // undefined</span>
           </code></pre>
         </section>
         <section>
-          <h2>Prevents access</h2>
-          <pre><code data-trim data-noescapes class="javascript">
-var ageKey = Symbol("age");
+          <h2>Protects access to values</h2>
+          <pre><code data-trim data-noescape class="javascript">
+var age = Symbol("age");
 var person = {
   "name" : "Clark",
-  [ageKey] : 28
+  [age] : 28
 };
 
-for(var key in person){
-  console.log(person[key]); //Would only log "Clark"
-}
+<span class="fragment">console.log(person.age); // undefined
+console.log(person[age]); // 28</span>
 
-console.log(person.age); //undefined
+<span class="fragment">for(var key in person){
+  console.log(person[key]); // Would only log "Clark"
+}</span>
           </code></pre>
         </section>
+        <!--<section>
+          <h2>But doesn't completely prevent access</h2>
+          <pre><code data-trim data-noescape class="javascript">
+<span class="fragment">var symbols = Object.getOwnPropertySymbols(person);</span>
+
+<span class="fragment">for(var key in symbols){
+  var symbol = symbols[key];
+  console.log(symbol); // Symbol(age)
+  console.log(person[symbol]); // 28
+}</span>
+          </code></pre>
+        </section>-->
         <section>
           <h2>Use cases</h2>
         </section>
         <section>
-          <h2>Attaching properties in a safe way</h2>
+          <h2>No risk of collision</h2>
           <pre><code data-trim data-noescape class="javascript">
-var dataSym = Symbol('data');
+var isOpen = Symbol('isOpen');
 var elm = document.getElementById('dropdown');
 
-elm[dataSym] = {
-  //Some data you want to associate with the element
-};
+elm[isOpen] = true;
           </code></pre>
         </section>
         <section>
@@ -153,36 +164,37 @@ elm[dataSym] = {
         </section>
         <section>
           <pre><code data-trim data-noescape class="javascript">
-var things = [1, 'apple', 2, 'banana', 3, 'pear'],
-  thing;
+<span class="fragment">var things = [1, 'apple', 2, 'banana', 3, 'pear'],
+  thing;</span>
 
-for(thing <span class="keyword">of</span> things){
+<span class="fragment">for(thing <span class="keyword">of</span> things){
   console.log(thing);
-}
-// Output:
+}</span>
+<span class="fragment">// Output:
 // 1
 // apple
 // 2
 // banana
 // 3
-// pear
+// pear</span>
 </code></pre>
         </section>
         <section>
+          <h2>Symbol.iterator</h2>
           <pre><code data-trim data-noescape class="javascript">
-things[Symbol.iterator] = function*(){
+things[Symbol.iterator]<span class="fragment"> = function*(){
   for(let i = 0; i < this.length; i++){
     if(typeof this[i] === "string") yield this[i];
   }
-}
+}</span>
 
-for(thing <span class="keyword">of</span> things){
+<span class="fragment">for(thing <span class="keyword">of</span> things){
   console.log(thing);
 }
 // Output:
 // apple
 // banana
-// pear
+// pear</span>
           </code></pre>
         </section>
         <section>
@@ -246,7 +258,7 @@ function Television(){
         <section>
           <h2>Hiding variables using symbols</h2>
           <pre><code data-trim data-noescape class="javascript">
-<span class="fragment">var hasPowerKey = Symbol('hasPower');</span>
+<span class="fragment">const hasPowerKey = Symbol('hasPower');</span>
 
 <span class="fragment">class Television {
   constructor() {
@@ -281,7 +293,7 @@ PlasmaTV.prototype = new Television();
         <section class="highlight-code">
           <h2>Functions only created once</h2>
           <pre><code data-trim data-noescape class="javascript">
-var hasPowerKey = Symbol('hasPower');
+const hasPowerKey = Symbol('hasPower');
 
 class Television {
   constructor() {
@@ -299,6 +311,16 @@ class Television {
           </code></pre>
         </section>
         <section>
+          <h2>Browser support</h2>
+          <ul>
+            <li>Chrome, Firefox, Opera, IE Edge &#10003;</li>
+            <li>Safari, not yet but Symbols is in webkit</li>
+            <li>NodeJS behind the --harmony flag</li>
+            <li>IO.js without any flags</li>
+          </ul>
+        </section>
+        <section>
+          <h2>Symbols</h2>
           <ul>
             <li>New language primitive Symbols</li>
             <li>Used for some new built-in language features</li>
@@ -311,6 +333,7 @@ class Television {
             <li><a href="http://www.2ality.com/2014/12/es6-symbols.html">2ality.com/2014/12/es6-symbols.html</a> (Lots of awesome ES6 info)</li>
             <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol">MDN Page on Symbols</a></li>
             <li><a href="https://curiosity-driven.org/private-properties-in-javascript">curiosity-driven.org/private-properties-in-javascript</a></li>
+            <li><a href="https://news.ycombinator.com/item?id=8808615">Hacker News comments</a></li>
           </ul>
         </section>
         <section>
